@@ -22,22 +22,10 @@ const toTimeString = (s) => {
   return format.format(time) + "." + time.getMilliseconds();
 };
 
-function App() {
-  const [x, setX] = useState(5);
+const useCamera = ({ startTime, endTime, x, setCameraImgPath }) => {
   const [cameraName, setCameraName] = useState("");
-  const [sensor1Name, setSensor1Name] = useState("");
-  const [sensor2Name, setSensor2Name] = useState("");
-
   const [cameraList, setCameraList] = useState([]);
-  const [sensorList, setSensorList] = useState([]);
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-
-  // const [cameraTimeSet, setCameraTimeSet] = useState("");
   const [cameraTimeSetIndex, setCameraTimeSetIndex] = useState(0);
-  const [cameraImgPath, setCameraImgPath] = useState("");
-
-  console.log(startTime);
 
   useEffect(() => {
     const fetchCameraList = async () => {
@@ -49,25 +37,10 @@ function App() {
     fetchCameraList();
   }, []);
 
-  useEffect(() => {
-    const fetchSensorList = async () => {
-      const res = await fetch(`${BASE_URL}sensor`);
-
-      const data = await res.json();
-      setSensorList(data);
-    };
-    fetchSensorList();
-  }, []);
-
   const uniqueCameraNames = useMemo(() => {
     const a = cameraList.map(({ camera_name }) => camera_name);
     return [...new Set(a)];
   }, [cameraList]);
-
-  const uniqueSensorNames = useMemo(() => {
-    const a = sensorList.map(({ sensor_name }) => sensor_name);
-    return [...new Set(a)];
-  }, [sensorList]);
 
   const selectedCameraList = useMemo(() => {
     return cameraList.filter(({ camera_name }) => camera_name === cameraName);
@@ -85,7 +58,7 @@ function App() {
     let previousTimestamp = 0;
     let a = [];
     let tmp = [];
-    selectedCameraList.forEach((camera, index) => {
+    cameraTimeSets.forEach((camera, index) => {
       if (index === 0) {
         tmp.push(camera);
       } else if (camera.timestamp - previousTimestamp < x) {
@@ -103,14 +76,59 @@ function App() {
     }
 
     return a;
-  }, [selectedCameraList, x]);
+  }, [cameraTimeSets, x]);
 
   useEffect(() => {
     const currentCameraSet = cameraTimeSetsByX[cameraTimeSetIndex];
     if (cameraTimeSetsByX[cameraTimeSetIndex]) {
       setCameraImgPath(currentCameraSet[0].img);
     }
-  }, [cameraTimeSetsByX, cameraTimeSetIndex]);
+  }, [cameraTimeSetsByX, cameraTimeSetIndex, setCameraImgPath]);
+
+  return {
+    cameraName,
+    setCameraName,
+    uniqueCameraNames,
+    cameraTimeSetIndex,
+    setCameraTimeSetIndex,
+    cameraTimeSetsByX,
+  };
+};
+
+function App() {
+  const [x, setX] = useState(5);
+  const [sensor1Name, setSensor1Name] = useState("");
+  const [sensor2Name, setSensor2Name] = useState("");
+
+  const [sensorList, setSensorList] = useState([]);
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+
+  const [cameraImgPath, setCameraImgPath] = useState("");
+
+  useEffect(() => {
+    const fetchSensorList = async () => {
+      const res = await fetch(`${BASE_URL}sensor`);
+
+      const data = await res.json();
+      setSensorList(data);
+    };
+    fetchSensorList();
+  }, []);
+
+  const uniqueSensorNames = useMemo(() => {
+    const a = sensorList.map(({ sensor_name }) => sensor_name);
+    return [...new Set(a)];
+  }, [sensorList]);
+
+  const {
+    cameraName,
+    setCameraName,
+    uniqueCameraNames,
+    cameraTimeSetIndex,
+    setCameraTimeSetIndex,
+    cameraTimeSetsByX,
+  } = useCamera({ startTime, endTime, x, setCameraImgPath });
 
   return (
     <div className="App">
