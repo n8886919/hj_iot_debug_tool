@@ -12,7 +12,14 @@ const getTimeStamp = (dateString) => {
 };
 
 const toTimeString = (s) => {
-  return Date(s * 1000);
+  const time = new Date(s * 1000);
+
+  // return `${time.getFullYear()} / ${time.getMonth()} / ${time.getDate()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
+  const format = new Intl.DateTimeFormat("zh-TW", {
+    dateStyle: "full",
+    timeStyle: "medium",
+  });
+  return format.format(time) + "." + time.getMilliseconds();
 };
 
 function App() {
