@@ -112,15 +112,6 @@ function App() {
     }
   }, [cameraTimeSetsByX, cameraTimeSetIndex]);
 
-  console.log("selectedCameraList", selectedCameraList);
-  console.log("cameraTimeSets", cameraTimeSets);
-  console.log("cameraTimeSetsByX", cameraTimeSetsByX);
-
-  console.log(
-    "cameraTimeSetsByX[cameraTimeSetIndex]",
-    cameraTimeSetsByX[cameraTimeSetIndex]
-  );
-
   return (
     <div className="App">
       <CurrentTimeHeader />
