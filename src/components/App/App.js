@@ -5,8 +5,14 @@ import CurrentTimeHeader from "../CurrentTimeHeader";
 // const BASE_URL = 'http://taiwan-sms.net/Iot/'
 const BASE_URL = "http://localhost:5566/";
 
+// http://123.195.205.170:8123/local/snapshot/1624431794.989642.jpg
+
 const getTimeStamp = (dateString) => {
   return new Date(dateString) / 1000;
+};
+
+const toTimeString = (s) => {
+  return Date(s * 1000);
 };
 
 function App() {
@@ -19,6 +25,10 @@ function App() {
   const [sensorList, setSensorList] = useState([]);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+
+  // const [cameraTimeSet, setCameraTimeSet] = useState("");
+  const [cameraTimeSetIndex, setCameraTimeSetIndex] = useState(0);
+  const [cameraImgPath, setCameraImgPath] = useState("");
 
   console.log(startTime);
 
@@ -61,10 +71,48 @@ function App() {
       ({ timestamp }) =>
         timestamp > getTimeStamp(startTime) && timestamp < getTimeStamp(endTime)
     );
+    // .sort((a, b) => a.timestamp - b.timestamp);
   }, [endTime, selectedCameraList, startTime]);
+
+  const cameraTimeSetsByX = useMemo(() => {
+    let previousTimestamp = 0;
+    let a = [];
+    let tmp = [];
+    selectedCameraList.forEach((camera, index) => {
+      if (index === 0) {
+        tmp.push(camera);
+      } else if (camera.timestamp - previousTimestamp < x) {
+        tmp.push(camera);
+      } else {
+        a.push(tmp);
+        tmp = [];
+        tmp.push(camera);
+      }
+
+      previousTimestamp = camera.timestamp;
+    });
+    if (tmp.length > 0) {
+      a.push(tmp);
+    }
+
+    return a;
+  }, [selectedCameraList, x]);
+
+  useEffect(() => {
+    const currentCameraSet = cameraTimeSetsByX[cameraTimeSetIndex];
+    if (cameraTimeSetsByX[cameraTimeSetIndex]) {
+      setCameraImgPath(currentCameraSet[0].img);
+    }
+  }, [cameraTimeSetsByX, cameraTimeSetIndex]);
 
   console.log("selectedCameraList", selectedCameraList);
   console.log("cameraTimeSets", cameraTimeSets);
+  console.log("cameraTimeSetsByX", cameraTimeSetsByX);
+
+  console.log(
+    "cameraTimeSetsByX[cameraTimeSetIndex]",
+    cameraTimeSetsByX[cameraTimeSetIndex]
+  );
 
   return (
     <div className="App">
@@ -103,6 +151,28 @@ function App() {
             </option>
           ))}
         </select>
+      </div>
+      <div>
+        <label>Camera Time Sets</label>
+        <select
+          value={cameraTimeSetIndex}
+          onChange={(e) => setCameraTimeSetIndex(e.target.value)}
+        >
+          <option disabled></option>
+
+          {cameraTimeSetsByX.map((timeSet, i) => (
+            <option key={i} value={i}>
+              {toTimeString(timeSet[0].timestamp)}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        {cameraImgPath && (
+          <img
+            src={`http://123.195.205.170:8123/local/snapshot/${cameraImgPath}.jpg`}
+          />
+        )}
       </div>
     </div>
   );
