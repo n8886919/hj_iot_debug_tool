@@ -101,7 +101,9 @@ const useCamera = ({ startTime, endTime, x, setCameraImgPath }) => {
 };
 
 const useSensor = ({ startTime, endTime, x }) => {
-  const [timestamp, setTimestamp] = useState(0);
+  const [timestamp, setTimestamp] = useState("0-0");
+  const [chartStartTime, chartEndTime] = timestamp.split("-");
+
   const [sensorList, setSensorList] = useState([]);
 
   const [sensor1Name, setSensor1Name] = useState("");
@@ -261,6 +263,9 @@ const useSensor = ({ startTime, endTime, x }) => {
     timestamp,
     setTimestamp,
 
+    chartStartTime,
+    chartEndTime,
+
     uniqueSensorNames,
 
     sensor1Name,
@@ -301,6 +306,9 @@ function App() {
     timestamp,
     setTimestamp,
 
+    chartStartTime,
+    chartEndTime,
+
     sensor1Name,
     setSensor1Name,
     sensor1TimeSets,
@@ -325,6 +333,8 @@ function App() {
   console.log("cameraTimeSetsByX", cameraTimeSetsByX);
   console.log("timestamp", timestamp);
   console.log("sensor1TimeIntervalByX", sensor1TimeIntervalByX);
+  console.log("chartStartTime", chartStartTime);
+  console.log("chartEndTime", chartEndTime);
 
   return (
     <div className="App">
@@ -427,9 +437,9 @@ function App() {
           value={timestamp}
           onChange={(e) => setTimestamp(e.target.value)}
         >
-          <option disabled value={0}></option>
+          <option disabled value="0-0"></option>
 
-          {mergedTimeSetsIntervalByX.map(({ startTime, endTime }, i) => (
+          {mergedTimeSetsIntervalByX.map(({ startTime, endTime }) => (
             <option
               key={`${startTime}-${endTime}`}
               value={`${startTime}-${endTime}`}
