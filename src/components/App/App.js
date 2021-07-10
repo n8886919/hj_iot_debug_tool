@@ -152,6 +152,20 @@ const useSensor = ({ startTime, endTime, x }) => {
       .sort((a, b) => a.timestamp - b.timestamp);
   }, [endTime, selectedSensor2List, startTime]);
 
+  const sensor1TimeSetsInChart = useMemo(() => {
+    return sensor1TimeSets.filter(
+      ({ timestamp }) =>
+        timestamp >= chartStartTime && timestamp <= chartEndTime
+    );
+  }, [chartEndTime, chartStartTime, sensor1TimeSets]);
+
+  const sensor2TimeSetsInChart = useMemo(() => {
+    return sensor2TimeSets.filter(
+      ({ timestamp }) =>
+        timestamp >= chartStartTime && timestamp <= chartEndTime
+    );
+  }, [chartEndTime, chartStartTime, sensor2TimeSets]);
+
   const sensor1TimeIntervalByX = useMemo(() => {
     if (sensor1TimeSets.length === 0) return [];
 
@@ -230,7 +244,8 @@ const useSensor = ({ startTime, endTime, x }) => {
 
     sensor1Name,
     setSensor1Name,
-    sensor1TimeSets,
+    sensor1TimeSetsInChart,
+    sensor2TimeSetsInChart,
 
     sensor1TimeIntervalByX,
     mergedTimeSetsIntervalByX,
@@ -262,8 +277,8 @@ function App() {
     timestamp,
     setTimestamp,
 
-    chartStartTime,
-    chartEndTime,
+    sensor1TimeSetsInChart,
+    sensor2TimeSetsInChart,
 
     sensor1Name,
     setSensor1Name,
@@ -273,6 +288,10 @@ function App() {
     sensor2Name,
     setSensor2Name,
   } = useSensor({ startTime, endTime, x });
+
+  console.log("sensor1TimeSetsInChart", sensor1TimeSetsInChart);
+  console.log("sensor2TimeSetsInChart", sensor2TimeSetsInChart);
+  console.log("mergedTimeSetsIntervalByX", mergedTimeSetsIntervalByX);
 
   return (
     <div className="App">
