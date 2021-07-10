@@ -346,7 +346,7 @@ function App() {
       </div>
 
       <div>
-        <label>Merged Time Sets</label>
+        <label>Sensor Time Sets</label>
         <select
           value={timestamp}
           onChange={(e) => setTimestamp(e.target.value)}
