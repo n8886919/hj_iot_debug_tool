@@ -152,19 +152,6 @@ const useSensor = ({ startTime, endTime, x }) => {
       .sort((a, b) => a.timestamp - b.timestamp);
   }, [endTime, selectedSensor2List, startTime]);
 
-  const sensor1TimeSetsFirstItemsByX = useMemo(() => {
-    let previousTimestamp = 0;
-    let firstItems = [];
-    sensor1TimeSets.forEach((sensor) => {
-      if (sensor.timestamp - previousTimestamp > x) {
-        firstItems.push(sensor);
-      }
-      previousTimestamp = sensor.timestamp;
-    });
-
-    return firstItems;
-  }, [sensor1TimeSets, x]);
-
   const sensor1TimeIntervalByX = useMemo(() => {
     if (sensor1TimeSets.length === 0) return [];
 
@@ -220,7 +207,7 @@ const useSensor = ({ startTime, endTime, x }) => {
   }, [sensor2TimeSets, x]);
 
   const mergedTimeSetsIntervalByX = useMemo(() => {
-    if (sensor1Name === sensor2Name) return sensor1TimeSetsFirstItemsByX;
+    if (sensor1Name === sensor2Name) return sensor1TimeIntervalByX;
 
     return sensor1TimeIntervalByX
       .concat(sensor2TimeIntervalByX)
@@ -228,35 +215,8 @@ const useSensor = ({ startTime, endTime, x }) => {
   }, [
     sensor1Name,
     sensor1TimeIntervalByX,
-    sensor1TimeSetsFirstItemsByX,
     sensor2Name,
     sensor2TimeIntervalByX,
-  ]);
-
-  const sensor2TimeSetsFirstItemsByX = useMemo(() => {
-    let previousTimestamp = 0;
-    let firstItems = [];
-    sensor2TimeSets.forEach((sensor) => {
-      if (sensor.timestamp - previousTimestamp > x) {
-        firstItems.push(sensor);
-      }
-      previousTimestamp = sensor.timestamp;
-    });
-
-    return firstItems;
-  }, [sensor2TimeSets, x]);
-
-  const mergedTimeSetsFirstItemsByX = useMemo(() => {
-    if (sensor1Name === sensor2Name) return sensor1TimeSetsFirstItemsByX;
-
-    return sensor1TimeSetsFirstItemsByX
-      .concat(sensor2TimeSetsFirstItemsByX)
-      .sort((a, b) => a.timestamp - b.timestamp);
-  }, [
-    sensor1Name,
-    sensor1TimeSetsFirstItemsByX,
-    sensor2Name,
-    sensor2TimeSetsFirstItemsByX,
   ]);
 
   return {
@@ -274,10 +234,6 @@ const useSensor = ({ startTime, endTime, x }) => {
 
     sensor1TimeIntervalByX,
     mergedTimeSetsIntervalByX,
-
-    sensor1TimeSetsFirstItemsByX,
-    sensor2TimeSetsFirstItemsByX,
-    mergedTimeSetsFirstItemsByX,
 
     sensor2Name,
     setSensor2Name,
@@ -311,30 +267,12 @@ function App() {
 
     sensor1Name,
     setSensor1Name,
-    sensor1TimeSets,
-
-    sensor1TimeIntervalByX,
 
     mergedTimeSetsIntervalByX,
-
-    sensor1TimeSetsFirstItemsByX,
-    sensor2TimeSetsFirstItemsByX,
-    mergedTimeSetsFirstItemsByX,
 
     sensor2Name,
     setSensor2Name,
   } = useSensor({ startTime, endTime, x });
-
-  console.log("sensor1TimeSets", sensor1TimeSets);
-
-  console.log("sensor1TimeSetsFirstItemsByX", sensor1TimeSetsFirstItemsByX);
-  console.log("sensor2TimeSetsFirstItemsByX", sensor2TimeSetsFirstItemsByX);
-  console.log("mergedTimeSetsFirstItemsByX", mergedTimeSetsFirstItemsByX);
-  console.log("cameraTimeSetsByX", cameraTimeSetsByX);
-  console.log("timestamp", timestamp);
-  console.log("sensor1TimeIntervalByX", sensor1TimeIntervalByX);
-  console.log("chartStartTime", chartStartTime);
-  console.log("chartEndTime", chartEndTime);
 
   return (
     <div className="App">
