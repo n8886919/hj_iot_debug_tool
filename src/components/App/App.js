@@ -107,9 +107,6 @@ const useSensor = ({ startTime, endTime, x }) => {
   const [sensor1Name, setSensor1Name] = useState("");
   const [sensor2Name, setSensor2Name] = useState("");
 
-  const [sensor1TimeSetIndex, setSensor1TimeSetIndex] = useState(0);
-  const [sensor2TimeSetIndex, setSensor2TimeSetIndex] = useState(0);
-
   useEffect(() => {
     const fetchSensorList = async () => {
       const res = await fetch(`${BASE_URL}sensor`);
@@ -200,19 +197,14 @@ const useSensor = ({ startTime, endTime, x }) => {
 
     sensor1Name,
     setSensor1Name,
-    sensor1TimeSetIndex,
-    setSensor1TimeSetIndex,
     sensor1TimeSets,
 
     sensor1TimeSetsFirstItemsByX,
     sensor2TimeSetsFirstItemsByX,
-
     mergedTimeSetsFirstItemsByX,
 
     sensor2Name,
     setSensor2Name,
-    sensor2TimeSetIndex,
-    setSensor2TimeSetIndex,
   };
 };
 
@@ -248,8 +240,6 @@ function App() {
 
     sensor2Name,
     setSensor2Name,
-    sensor2TimeSetIndex,
-    setSensor2TimeSetIndex,
   } = useSensor({ startTime, endTime, x });
 
   console.log("sensor1TimeSets", sensor1TimeSets);
