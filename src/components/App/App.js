@@ -101,6 +101,7 @@ const useCamera = ({ startTime, endTime, x, setCameraImgPath }) => {
 };
 
 const useSensor = ({ startTime, endTime, x }) => {
+  const [timestamp, setTimestamp] = useState(0);
   const [sensorList, setSensorList] = useState([]);
 
   const [sensor1Name, setSensor1Name] = useState("");
@@ -152,68 +153,66 @@ const useSensor = ({ startTime, endTime, x }) => {
       .sort((a, b) => a.timestamp - b.timestamp);
   }, [endTime, selectedSensor2List, startTime]);
 
-  const sensor1TimeSetsByX = useMemo(() => {
+  const sensor1TimeSetsFirstItemsByX = useMemo(() => {
     let previousTimestamp = 0;
-    let a = [];
-    let tmp = [];
-    sensor1TimeSets.forEach((sensor, index) => {
-      if (index === 0) {
-        tmp.push(sensor);
-      } else if (sensor.timestamp - previousTimestamp < x) {
-        tmp.push(sensor);
-      } else {
-        a.push(tmp);
-        tmp = [];
-        tmp.push(sensor);
+    let firstItems = [];
+    sensor1TimeSets.forEach((sensor) => {
+      if (sensor.timestamp - previousTimestamp > x) {
+        firstItems.push(sensor);
       }
-
       previousTimestamp = sensor.timestamp;
     });
-    if (tmp.length > 0) {
-      a.push(tmp);
-    }
 
-    return a;
+    return firstItems;
   }, [sensor1TimeSets, x]);
 
-  const sensor2TimeSetsByX = useMemo(() => {
+  const sensor2TimeSetsFirstItemsByX = useMemo(() => {
     let previousTimestamp = 0;
-    let a = [];
-    let tmp = [];
-    sensor2TimeSets.forEach((sensor, index) => {
-      if (index === 0) {
-        tmp.push(sensor);
-      } else if (sensor.timestamp - previousTimestamp < x) {
-        tmp.push(sensor);
-      } else {
-        a.push(tmp);
-        tmp = [];
-        tmp.push(sensor);
+    let firstItems = [];
+    sensor2TimeSets.forEach((sensor) => {
+      if (sensor.timestamp - previousTimestamp > x) {
+        firstItems.push(sensor);
       }
-
       previousTimestamp = sensor.timestamp;
     });
-    if (tmp.length > 0) {
-      a.push(tmp);
-    }
 
-    return a;
+    return firstItems;
   }, [sensor2TimeSets, x]);
 
+  const mergedTimeSetsFirstItemsByX = useMemo(() => {
+    if (sensor1Name === sensor2Name) return sensor1TimeSetsFirstItemsByX;
+
+    return sensor1TimeSetsFirstItemsByX
+      .concat(sensor2TimeSetsFirstItemsByX)
+      .sort((a, b) => a.timestamp - b.timestamp);
+  }, [
+    sensor1Name,
+    sensor1TimeSetsFirstItemsByX,
+    sensor2Name,
+    sensor2TimeSetsFirstItemsByX,
+  ]);
+
   return {
+    timestamp,
+    setTimestamp,
+
     uniqueSensorNames,
 
     sensor1Name,
     setSensor1Name,
     sensor1TimeSetIndex,
     setSensor1TimeSetIndex,
-    sensor1TimeSetsByX,
+    sensor1TimeSets,
+
+    sensor1TimeSetsFirstItemsByX,
+    sensor2TimeSetsFirstItemsByX,
+
+    mergedTimeSetsFirstItemsByX,
 
     sensor2Name,
     setSensor2Name,
     sensor2TimeSetIndex,
     setSensor2TimeSetIndex,
-    sensor2TimeSetsByX,
   };
 };
 
@@ -236,21 +235,30 @@ function App() {
 
   const {
     uniqueSensorNames,
+    timestamp,
+    setTimestamp,
 
     sensor1Name,
     setSensor1Name,
-    sensor1TimeSetIndex,
-    setSensor1TimeSetIndex,
-    sensor1TimeSetsByX,
+    sensor1TimeSets,
+
+    sensor1TimeSetsFirstItemsByX,
+    sensor2TimeSetsFirstItemsByX,
+    mergedTimeSetsFirstItemsByX,
 
     sensor2Name,
     setSensor2Name,
     sensor2TimeSetIndex,
     setSensor2TimeSetIndex,
-    sensor2TimeSetsByX,
   } = useSensor({ startTime, endTime, x });
 
-  console.log("sensor1TimeSetsByX", sensor1TimeSetsByX);
+  console.log("sensor1TimeSets", sensor1TimeSets);
+
+  console.log("sensor1TimeSetsFirstItemsByX", sensor1TimeSetsFirstItemsByX);
+  console.log("sensor2TimeSetsFirstItemsByX", sensor2TimeSetsFirstItemsByX);
+  console.log("mergedTimeSetsFirstItemsByX", mergedTimeSetsFirstItemsByX);
+  console.log("cameraTimeSetsByX", cameraTimeSetsByX);
+  console.log("timestamp", timestamp);
 
   return (
     <div className="App">
@@ -308,7 +316,9 @@ function App() {
       <div>
         {cameraImgPath && (
           <img
+            style={{ maxWidth: "100%" }}
             src={`http://123.195.205.170:8123/local/snapshot/${cameraImgPath}.jpg`}
+            alt="img"
           />
         )}
       </div>
@@ -346,32 +356,16 @@ function App() {
       </div>
 
       <div>
-        <label>Sensor1 Time Sets</label>
+        <label>Merged Time Sets</label>
         <select
-          value={sensor1TimeSetIndex}
-          onChange={(e) => setSensor1TimeSetIndex(e.target.value)}
+          value={timestamp}
+          onChange={(e) => setTimestamp(e.target.value)}
         >
-          <option disabled></option>
+          <option disabled value={0}></option>
 
-          {sensor1TimeSetsByX.map((timeSet, i) => (
-            <option key={i} value={i}>
-              {toTimeString(timeSet[0].timestamp)}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label>Sensor2 Time Sets</label>
-        <select
-          value={sensor2TimeSetIndex}
-          onChange={(e) => setSensor2TimeSetIndex(e.target.value)}
-        >
-          <option disabled></option>
-
-          {sensor2TimeSetsByX.map((timeSet, i) => (
-            <option key={i} value={i}>
-              {toTimeString(timeSet[0].timestamp)}
+          {mergedTimeSetsFirstItemsByX.map(({ timestamp }, i) => (
+            <option key={timestamp} value={timestamp}>
+              {toTimeString(timestamp)}
             </option>
           ))}
         </select>
