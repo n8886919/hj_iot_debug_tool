@@ -1,4 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import "./App.css";
 import CurrentTimeHeader from "../CurrentTimeHeader";
 
@@ -9,6 +18,53 @@ const BASE_URL = "http://localhost:5566/";
 
 const getTimeStamp = (dateString) => {
   return new Date(dateString) / 1000;
+};
+
+const Tick = (props) => {
+  const { x, y, payload } = props;
+
+  console.log("payload", payload);
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={0}
+        y={0}
+        dy={16}
+        textAnchor="end"
+        fill="#666"
+        // transform="rotate(-35)"
+      >
+        {toOnlyTimeString(payload.value)}
+      </text>
+    </g>
+  );
+};
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="custom-tooltip">
+        <p>{`Timestamp: ${label}`}</p>
+        <p>{`Time: ${toOnlyTimeString(label)}`}</p>
+        <p>{`Value:  : ${payload[0].value}`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+const toOnlyTimeString = (s) => {
+  const time = new Date(s * 1000);
+  // return `${time.getFullYear()} / ${time.getMonth()} / ${time.getDate()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
+  const format = new Intl.DateTimeFormat("zh-TW", {
+    timeStyle: "medium",
+  });
+  const msString = time.getMilliseconds().toString();
+  const prefix = Array(3 - msString.length)
+    .fill("0")
+    .join();
+  return format.format(time) + "." + prefix + time.getMilliseconds();
 };
 
 const toTimeString = (s) => {
@@ -405,6 +461,44 @@ function App() {
             </option>
           ))}
         </select>
+      </div>
+      <div style={{ width: "100%", height: "300px" }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={sensor1TimeSetsInChart}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              type="number"
+              dataKey="timestamp"
+              domain={["dataMin", "dataMax"]}
+              // label="Height"
+              tick={<Tick />}
+              tickCount={100}
+              interval="preserveStartEnd"
+            />
+            <YAxis />
+            <Tooltip
+              content={<CustomTooltip />}
+              // formatter={(value, name, props) => [
+              //   "formatted value",
+              //   "formatted name",
+              // ]}
+            />
+            {/* <Legend /> */}
+            <Bar
+              dataKey="value"
+              fill="#DBE2ED"
+              //  maxBarSize={50}
+            />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
