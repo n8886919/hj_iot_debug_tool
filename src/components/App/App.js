@@ -168,13 +168,16 @@ const useSensor = ({ startTime, endTime, x }) => {
       ({ timestamp }) =>
         timestamp >= chartStartTime && timestamp <= chartEndTime
     );
+    // .map(({ value, ...others }) => ({ ...others, s1: value }));
   }, [chartEndTime, chartStartTime, sensor1TimeSets]);
 
   const sensor2TimeSetsInChart = useMemo(() => {
-    return sensor2TimeSets.filter(
-      ({ timestamp }) =>
-        timestamp >= chartStartTime && timestamp <= chartEndTime
-    );
+    return sensor2TimeSets
+      .filter(
+        ({ timestamp }) =>
+          timestamp >= chartStartTime && timestamp <= chartEndTime
+      )
+      .map(({ value, ...others }) => ({ ...others, value: value * -1 }));
   }, [chartEndTime, chartStartTime, sensor2TimeSets]);
 
   const sensor1TimeIntervalByX = useMemo(() => {
@@ -244,7 +247,12 @@ const useSensor = ({ startTime, endTime, x }) => {
     sensor2TimeIntervalByX,
   ]);
 
+  const chartData = useMemo(() => {
+    return sensor1TimeSetsInChart.concat(sensor2TimeSetsInChart);
+  }, [sensor1TimeSetsInChart, sensor2TimeSetsInChart]);
+
   return {
+    chartData,
     timestamp,
     setTimestamp,
 
@@ -284,6 +292,7 @@ function App() {
   } = useCamera({ startTime, endTime, x, setCameraImgPath });
 
   const {
+    chartData,
     uniqueSensorNames,
     timestamp,
     setTimestamp,
@@ -300,6 +309,7 @@ function App() {
     setSensor2Name,
   } = useSensor({ startTime, endTime, x });
 
+  console.log("chartData", chartData);
   console.log("sensor1TimeSetsInChart", sensor1TimeSetsInChart);
   console.log("sensor2TimeSetsInChart", sensor2TimeSetsInChart);
   console.log("mergedTimeSetsIntervalByX", mergedTimeSetsIntervalByX);
@@ -420,7 +430,7 @@ function App() {
       <div style={{ width: "100%", height: "300px" }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={sensor1TimeSetsInChart}
+            data={chartData}
             margin={{
               top: 5,
               right: 30,
