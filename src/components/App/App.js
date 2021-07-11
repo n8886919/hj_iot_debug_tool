@@ -3,6 +3,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -311,10 +312,10 @@ function App() {
     setSensor2Name,
   } = useSensor({ startTime, endTime, x });
 
-  console.log("chartData", chartData);
-  console.log("sensor1TimeSetsInChart", sensor1TimeSetsInChart);
-  console.log("sensor2TimeSetsInChart", sensor2TimeSetsInChart);
-  console.log("mergedTimeSetsIntervalByX", mergedTimeSetsIntervalByX);
+  // console.log("chartData", chartData);
+  // console.log("sensor1TimeSetsInChart", sensor1TimeSetsInChart);
+  // console.log("sensor2TimeSetsInChart", sensor2TimeSetsInChart);
+  // console.log("mergedTimeSetsIntervalByX", mergedTimeSetsIntervalByX);
 
   return (
     <div className="App">
@@ -358,9 +359,11 @@ function App() {
         <label>Camera Time Sets</label>
         <select
           value={cameraTimeSetIndex}
-          onChange={(e) => setCameraTimeSetIndex(e.target.value)}
+          onChange={(e) => {
+            setCameraTimeSetIndex(e.target.value);
+          }}
         >
-          <option disabled></option>
+          <option></option>
 
           {cameraTimeSetsByX.map((timeSet, i) => (
             <option key={i} value={i}>
@@ -369,7 +372,7 @@ function App() {
           ))}
         </select>
       </div>
-      <div>
+      <div style={{ height: "400px" }}>
         {cameraImgPath && (
           <img
             style={{ maxWidth: "100%" }}
@@ -451,7 +454,18 @@ function App() {
             />
             <YAxis domain={[-100, 100]} />
             <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="value" fill="#DBE2ED" />
+            <Bar dataKey="value" fill="#DBE2ED">
+              {chartData.map((entry) => (
+                <Cell
+                  cursor="pointer"
+                  key={entry.timestamp}
+                  onClick={() => {
+                    setCameraTimeSetIndex(-1);
+                    setCameraImgPath(entry.timestamp);
+                  }}
+                />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
