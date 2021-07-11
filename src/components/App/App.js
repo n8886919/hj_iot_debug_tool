@@ -433,25 +433,13 @@ function App() {
               type="number"
               dataKey="timestamp"
               domain={["dataMin", "dataMax"]}
-              // label="Height"
               tick={<CustomTick />}
               tickCount={100}
               interval="preserveStartEnd"
             />
             <YAxis />
-            <Tooltip
-              content={<CustomTooltip />}
-              // formatter={(value, name, props) => [
-              //   "formatted value",
-              //   "formatted name",
-              // ]}
-            />
-            {/* <Legend /> */}
-            <Bar
-              dataKey="value"
-              fill="#DBE2ED"
-              //  maxBarSize={50}
-            />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar dataKey="value" fill="#DBE2ED" />
           </BarChart>
         </ResponsiveContainer>
       </div>
