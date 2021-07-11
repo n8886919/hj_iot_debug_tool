@@ -449,7 +449,7 @@ function App() {
               tickCount={100}
               interval="preserveStartEnd"
             />
-            <YAxis />
+            <YAxis domain={[-100, 100]} />
             <Tooltip content={<CustomTooltip />} />
             <Bar dataKey="value" fill="#DBE2ED" />
           </BarChart>
