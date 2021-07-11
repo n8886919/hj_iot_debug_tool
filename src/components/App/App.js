@@ -10,6 +10,8 @@ import {
 } from "recharts";
 import "./App.css";
 import CurrentTimeHeader from "../CurrentTimeHeader";
+import CustomTick from "./CustomTick";
+import CustomTooltip from "./CustomTooltip";
 
 // const BASE_URL = 'http://taiwan-sms.net/Iot/'
 const BASE_URL = "http://localhost:5566/";
@@ -18,53 +20,6 @@ const BASE_URL = "http://localhost:5566/";
 
 const getTimeStamp = (dateString) => {
   return new Date(dateString) / 1000;
-};
-
-const Tick = (props) => {
-  const { x, y, payload } = props;
-
-  console.log("payload", payload);
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text
-        x={0}
-        y={0}
-        dy={16}
-        textAnchor="end"
-        fill="#666"
-        // transform="rotate(-35)"
-      >
-        {toOnlyTimeString(payload.value)}
-      </text>
-    </g>
-  );
-};
-
-const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="custom-tooltip">
-        <p>{`Timestamp: ${label}`}</p>
-        <p>{`Time: ${toOnlyTimeString(label)}`}</p>
-        <p>{`Value:  : ${payload[0].value}`}</p>
-      </div>
-    );
-  }
-
-  return null;
-};
-
-const toOnlyTimeString = (s) => {
-  const time = new Date(s * 1000);
-  // return `${time.getFullYear()} / ${time.getMonth()} / ${time.getDate()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
-  const format = new Intl.DateTimeFormat("zh-TW", {
-    timeStyle: "medium",
-  });
-  const msString = time.getMilliseconds().toString();
-  const prefix = Array(3 - msString.length)
-    .fill("0")
-    .join();
-  return format.format(time) + "." + prefix + time.getMilliseconds();
 };
 
 const toTimeString = (s) => {
@@ -479,7 +434,7 @@ function App() {
               dataKey="timestamp"
               domain={["dataMin", "dataMax"]}
               // label="Height"
-              tick={<Tick />}
+              tick={<CustomTick />}
               tickCount={100}
               interval="preserveStartEnd"
             />
