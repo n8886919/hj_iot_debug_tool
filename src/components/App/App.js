@@ -146,7 +146,8 @@ const useSensor = ({ startTime, endTime, x }) => {
   const sensor1TimeSets = useMemo(() => {
     return selectedSensor1List
       .filter(
-        ({ timestamp }) =>
+        ({ timestamp, value }) =>
+          value >= 0 &&
           timestamp > getTimeStamp(startTime) &&
           timestamp < getTimeStamp(endTime)
       )
@@ -156,7 +157,8 @@ const useSensor = ({ startTime, endTime, x }) => {
   const sensor2TimeSets = useMemo(() => {
     return selectedSensor2List
       .filter(
-        ({ timestamp }) =>
+        ({ timestamp, value }) =>
+          value >= 0 &&
           timestamp > getTimeStamp(startTime) &&
           timestamp < getTimeStamp(endTime)
       )
