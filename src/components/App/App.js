@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  Bar,
-  BarChart,
+  LineChart,
+  Line,
   CartesianGrid,
   Cell,
   ResponsiveContainer,
@@ -264,14 +264,14 @@ const useSensor = ({ startTime, endTime, x }) => {
 
     sensor1Name,
     setSensor1Name,
-    sensor1TimeSetsInChart,
-    sensor2TimeSetsInChart,
-
-    sensor1TimeIntervalByX,
-    mergedTimeSetsIntervalByX,
 
     sensor2Name,
     setSensor2Name,
+
+    sensor1TimeSetsInChart,
+    sensor2TimeSetsInChart,
+
+    mergedTimeSetsIntervalByX,
   };
 };
 
@@ -301,6 +301,8 @@ function App() {
     sensor1Name,
     setSensor1Name,
 
+    sensor1TimeSetsInChart,
+    sensor2TimeSetsInChart,
     mergedTimeSetsIntervalByX,
 
     sensor2Name,
@@ -424,7 +426,7 @@ function App() {
       </div>
       <div style={{ width: "100%", height: "300px" }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart
+          <LineChart
             data={chartData}
             margin={{
               top: 5,
@@ -444,7 +446,17 @@ function App() {
             />
             <YAxis domain={[-100, 100]} />
             <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="value" fill="#DBE2ED">
+            <Line
+              data={sensor1TimeSetsInChart}
+              dataKey="value"
+              fill="#DBE2ED"
+            />
+            <Line
+              data={sensor2TimeSetsInChart}
+              dataKey="value"
+              fill="#DBE2ED"
+            />
+            {/* <Line dataKey="value" fill="#DBE2ED">
               {chartData.map((entry) => (
                 <Cell
                   cursor="pointer"
@@ -455,8 +467,8 @@ function App() {
                   }}
                 />
               ))}
-            </Bar>
-          </BarChart>
+            </Line> */}
+          </LineChart>
         </ResponsiveContainer>
       </div>
     </div>
