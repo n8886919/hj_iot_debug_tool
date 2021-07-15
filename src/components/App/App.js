@@ -14,8 +14,8 @@ import CurrentTimeHeader from "../CurrentTimeHeader";
 import CustomTick from "./CustomTick";
 import CustomTooltip from "./CustomTooltip";
 
-// const BASE_URL = 'http://taiwan-sms.net/Iot/'
-const BASE_URL = "http://localhost:5566/";
+const BASE_URL = "http://taiwan-sms.net/Iot/";
+// const BASE_URL = "http://localhost:5566/";
 
 const getTimeStamp = (dateString) => {
   return new Date(dateString) / 1000;
