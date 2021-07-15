@@ -298,9 +298,6 @@ function App() {
     timestamp,
     setTimestamp,
 
-    sensor1TimeSetsInChart,
-    sensor2TimeSetsInChart,
-
     sensor1Name,
     setSensor1Name,
 
@@ -309,11 +306,6 @@ function App() {
     sensor2Name,
     setSensor2Name,
   } = useSensor({ startTime, endTime, x });
-
-  // console.log("chartData", chartData);
-  // console.log("sensor1TimeSetsInChart", sensor1TimeSetsInChart);
-  // console.log("sensor2TimeSetsInChart", sensor2TimeSetsInChart);
-  // console.log("mergedTimeSetsIntervalByX", mergedTimeSetsIntervalByX);
 
   return (
     <div className="App">
