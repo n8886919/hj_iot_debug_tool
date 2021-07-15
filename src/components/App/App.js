@@ -17,8 +17,6 @@ import CustomTooltip from "./CustomTooltip";
 // const BASE_URL = 'http://taiwan-sms.net/Iot/'
 const BASE_URL = "http://localhost:5566/";
 
-// http://123.195.205.170:8123/local/snapshot/1624431794.989642.jpg
-
 const getTimeStamp = (dateString) => {
   return new Date(dateString) / 1000;
 };
@@ -376,8 +374,8 @@ function App() {
         {cameraImgPath && (
           <img
             style={{ maxWidth: "100%" }}
-            src={`http://123.195.205.170:8123/local/snapshot/${cameraImgPath}.jpg`}
-            alt="img"
+            src={`http://123.195.205.170:8123/local/snapshot/${cameraName}/${cameraImgPath}.jpg`}
+            alt={`http://123.195.205.170:8123/local/snapshot/${cameraName}/${cameraImgPath}.jpg`}
           />
         )}
       </div>
